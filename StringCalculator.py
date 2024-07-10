@@ -1,1 +1,2 @@
-
+def addition (number):
+  return
