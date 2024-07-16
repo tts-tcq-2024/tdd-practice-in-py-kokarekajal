@@ -1,5 +1,5 @@
 import unittest
-from StringCalculator import add
+from StringCalculator import StringCalculator
 class TestStringCalculator(unittest.TestCase):
         
         def test_expectZeroForEmptyInput(self):
