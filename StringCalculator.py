@@ -13,7 +13,7 @@ def delimiter_call(varx):
 def numbers(varx,delimiter):
      if varx.startswith("//"):
          return varx[4:].split(delimiter)
-     return re.split(rf"{re.escape(delimiter)}|\n", var1)
+     return re.split(rf"{re.escape(delimiter)}|\n", varx)
 def sumnumbers(var2):
     return sum(parse_int(num) for num in vary if valid_number(num))
 def parse_int(num_str):
