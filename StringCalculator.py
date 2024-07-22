@@ -1,42 +1,29 @@
-import re
-
-def add(numbers: str) -> int:
-    if not numbers:
+import re 
+def add(varx): 
+    if varx == "" or varx == "0":
         return 0
-
-    delimiters = [',', '\n']
-
-    # Check for custom delimiter
-    if numbers.startswith('//'):
-        parts = numbers.split('\n', 1)
-        delimiter_part = parts[0][2:]
-        delimiter_part, numbers = numbers.split('\n', 1)
-        delimiter_part = delimiter_part[2:]
-
-        # Handle case with multiple delimiters enclosed in []
-        if delimiter_part.startswith('[') and delimiter_part.endswith(']'):
-            delimiters = re.findall(r'\[(.*?)\]', delimiter_part)
-        else:
-            delimiters = [delimiter_part]
-
-        numbers = parts[1]
-        delimiters = re.findall(r'\[(.*?)\]', delimiter_part) or [delimiter_part]
-
-    delimiters_regex = '|'.join(map(re.escape, delimiters))
-
-    num_list = re.split(delimiters_regex, numbers)
-
-    total_sum = 0
-    negatives = []
-
-    for num in num_list:
-        if num:
-            try:
-                n = int(num)
-            except ValueError:
-                raise ValueError(f"Invalid number found: {num}")
-
-            n = int(num)
-            if n < 0:
-                negatives.append(n)
-            elif n <= 1000:
+    delimiter = delimiter_call(varx)
+    vary=numbers(varx,delimiter)
+    result=sumnumbers(vary)
+    return result
+def delimiter_call(varx):
+     if varx.startswith("//"):
+         return varx[2]
+     return ','
+def numbers(varx,delimiter):
+     if varx.startswith("//"):
+         return varx[4:].split(delimiter)
+     return re.split(rf"{re.escape(delimiter)}|\n", var1)
+def sumnumbers(var2):
+    return sum(parse_int(num) for num in vary if valid_number(num))
+def parse_int(num_str):
+    try:
+        return int(num_str)
+    except ValueError:
+        return 0
+def valid_number(num_str):
+    try:
+        num=int(num_str)
+        return num<=1000
+    except ValueError:
+        return False
