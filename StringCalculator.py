@@ -1,49 +1,42 @@
 import re
 
-class StringCalculator:
-    
-    @staticmethod
-    def add(numbers: str) -> int:
-        if numbers == "":
-            return 0
+def add(numbers: str) -> int:
+    if not numbers:
+        return 0
 
-        delimiters, numbers = StringCalculator.extract_delimiters(numbers)
-        num_list = StringCalculator.split_numbers(numbers, delimiters)
-        total_sum = StringCalculator.sum_numbers(num_list)
-        
-        return total_sum
+    delimiters = [',', '\n']
 
-    @staticmethod
-    def extract_delimiters(numbers: str):
-        if not numbers.startswith('//'):
-            return [',', '\n'], numbers
-        
-        delimiter_part, numbers = numbers[2:].split('\n', 1)
+    # Check for custom delimiter
+    if numbers.startswith('//'):
+        parts = numbers.split('\n', 1)
+        delimiter_part = parts[0][2:]
+        delimiter_part, numbers = numbers.split('\n', 1)
+        delimiter_part = delimiter_part[2:]
+
+        # Handle case with multiple delimiters enclosed in []
+        if delimiter_part.startswith('[') and delimiter_part.endswith(']'):
+            delimiters = re.findall(r'\[(.*?)\]', delimiter_part)
+        else:
+            delimiters = [delimiter_part]
+
+        numbers = parts[1]
         delimiters = re.findall(r'\[(.*?)\]', delimiter_part) or [delimiter_part]
-        return delimiters, numbers
 
-    @staticmethod
-    def split_numbers(numbers: str, delimiters: list):
-        delimiters_regex = '|'.join(map(re.escape, delimiters))
-        return re.split(delimiters_regex, numbers)
+    delimiters_regex = '|'.join(map(re.escape, delimiters))
 
-    @staticmethod
-    def sum_numbers(num_list: list):
-        total_sum = 0
-        negatives = StringCalculator.find_negatives(num_list)
-        StringCalculator.raise_if_negatives(negatives)
-        for num in num_list:
-            if num:
+    num_list = re.split(delimiters_regex, numbers)
+
+    total_sum = 0
+    negatives = []
+
+    for num in num_list:
+        if num:
+            try:
                 n = int(num)
-                if n <= 1000:
-                    total_sum += n
-        return total_sum
+            except ValueError:
+                raise ValueError(f"Invalid number found: {num}")
 
-    @staticmethod
-    def find_negatives(num_list: list):
-        return [int(num) for num in num_list if num and int(num) < 0]
-
-    @staticmethod
-    def raise_if_negatives(negatives: list):
-        if negatives:
-            raise ValueError(f"negatives not allowed: {', '.join(map(str, negatives))}")
+            n = int(num)
+            if n < 0:
+                negatives.append(n)
+            elif n <= 1000:
