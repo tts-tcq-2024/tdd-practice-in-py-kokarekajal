@@ -6,20 +6,28 @@ def add(numbers):
     delimiter, numbers = extract_delimiter(numbers)
     nums = parse_numbers(numbers, delimiter)
     validate_no_negatives(nums)
-    return sum(num for num in nums if num <= 1000)
+    return sum_ignoring_large_numbers(nums)
 
 def extract_delimiter(numbers):
-    default_delimiter = ",|\n"
     if numbers.startswith("//"):
         parts = numbers.split("\n", 1)
         delimiter = re.escape(parts[0][2:])
         return delimiter, parts[1]
-    return default_delimiter, numbers
+    return ",|\n", numbers
 
 def parse_numbers(numbers, delimiter):
     return list(map(int, re.split(delimiter, numbers)))
 
 def validate_no_negatives(nums):
-    negatives = [num for num in nums if num < 0]
+    negatives = find_negatives(nums)
     if negatives:
         raise ValueError(f"Negatives not allowed: {','.join(map(str, negatives))}")
+
+def find_negatives(nums):
+    return [num for num in nums if num < 0]
+
+def sum_ignoring_large_numbers(nums):
+    return sum(filter(valid_number, nums))
+
+def valid_number(num):
+    return num <= 1000
