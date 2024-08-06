@@ -1,27 +1,29 @@
-import re
+import unittest
+from StringCalculator import add
 
-def add(numbers):
-    if not numbers:
-        return 0
-    delimiter, numbers = extract_delimiter(numbers)
-    nums = parse_numbers(numbers, delimiter)
-    validate_no_negatives(nums)
-    return sum_ignoring_large_numbers(nums)
+class TestStringCalculator(unittest.TestCase):
+    def test_empty_string(self):
+        self.assertEqual(add(""), 0)
 
-def extract_delimiter(numbers):
-    if numbers.startswith("//"):
-        parts = numbers.split("\n", 1)
-        delimiter = re.escape(parts[0][2:])
-        return delimiter, parts[1]
-    return ",|\n", numbers
+    def test_single_number(self):
+        self.assertEqual(add("1"), 1)
 
-def parse_numbers(numbers, delimiter):
-    return list(map(int, re.split(delimiter, numbers)))
+    def test_two_numbers(self):
+        self.assertEqual(add("1,2"), 3)
 
-def validate_no_negatives(nums):
-    negatives = [num for num in nums if num < 0]
-    if negatives:
-        raise ValueError(f"Negatives not allowed: {','.join(map(str, negatives))}")
+    def test_multiple_numbers(self):
+        self.assertEqual(add("1,2,3,4"), 10)
 
-def sum_ignoring_large_numbers(nums):
-    return sum(num for num in nums if num <= 1000)
+    def test_new_lines_between_numbers(self):
+        self.assertEqual(add("1\n2,3"), 6)
+
+    def test_different_delimiters(self):
+        self.assertEqual(add("//;\n1;2"), 3)
+
+    def test_negative_numbers(self):
+        with self.assertRaises(ValueError) as context:
+            add("1,-2,3")
+        self.assertEqual(str(context.exception), "Negatives not allowed: -2")
+
+if __name__ == '__main__':
+    unittest.main()
